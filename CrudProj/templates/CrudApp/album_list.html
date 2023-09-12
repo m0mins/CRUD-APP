@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 {% extends "CrudApp/base.html" %}
+{%load static%}
+<link rel="stylesheet" href="{% static "css/mystyle.css" %}">
 
 {% block body_block%}
 
 <h4>Artist Name :{{artist_info.first_name}}  {{artist_info.last_name}}</h4>
 <h4>Instrument : {{artist_info.instrument}}</h4>
 <h4>Artist Rating : {{artist_rating.num_stars__avg}}</h4>
+<a href="{% url 'CrudApp:edit_artist' artist_id=artist_info.id%}" class="btn btn-success btn-sm">Edit</a>
 <h3>List of Albums </h3>
 <table class="table table-bordered">
     <tr>
@@ -15,7 +18,7 @@
     </tr>
     {% for album in album_list %}
     <tr>
-        <td>{{album.name}}</td>
+        <td><a href="{% url 'CrudApp:edit_album' album_id=album.id%}">{{album.name}}</a></td>
         <td>{{album.release_date|date:"M d, Y"}}</td>
         <td>{{album.num_stars}}</td>
     </tr>
