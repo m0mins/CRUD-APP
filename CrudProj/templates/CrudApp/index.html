@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends "CrudApp/base.html" %}
+
+{% block body_block%}
+<h3>List of Musician</h3>
+<ul>
+    {% if musicians %}
+    {% for musician in musicians %}
+    <li><a href="{% url 'CrudApp:album_list' artist_id=musician.id%}"> {{musician.first_name}}  {{musician.last_name}}</a></li>
+
+    {% endfor %}
+    {% else %}
+    <h4>No Musician in the list</h4>
+    {% endif %}
+</ul>
+{% endblock %}
