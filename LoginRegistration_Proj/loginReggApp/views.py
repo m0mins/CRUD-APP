@@ -1,14 +1,53 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from loginReggApp.forms import UserForm, UserInfoForm
+from django.contrib.auth.models import User
+from loginReggApp.models import UserInfo
 
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect,HttpResponse
+from django.urls import reverse
 # Create your views here.
 def index(request):
-    return HttpResponse("Hello Login App")
+    diction={}
+    if request.user.is_authenticated:
+        current_user=request.user
+        user_id=current_user.id
+        user_basic_info=User.objects.get(pk=user_id)
+        user_more_info=UserInfo.objects.get(user__pk=user_id)
+        diction={'user_basic_info':user_basic_info,'user_more_info':user_more_info}
+    return render(request,'loginReggApp/index.html',context=diction)
+
 
 def login_page(request):
     diction={}
-    return render(request,'loginReggApp/index.html',context=diction)
+    return render(request,'loginReggApp/login.html',context=diction)
+
+
+def user_login(request):
+    if request.method=='POST':
+        username=request.POST.get('username')
+        password=request.POST.get('password')
+
+        user=authenticate(username=username,password=password)
+
+        if user:
+            if user.is_active:
+                login(request,user)
+                return HttpResponseRedirect(reverse('loginReggApp:index'))
+            else:
+                return HttpResponse("Account is not active ")
+        else:
+            return HttpResponse("Login details are wrong!!")
+    else:
+       return HttpResponseRedirect(reverse('loginReggApp:login'))
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('loginReggApp:index'))
+
+
 
 def register(request):
     registered=False
